@@ -36,3 +36,20 @@ function findinf(url){
   console.log(newbox);
   return newbox;
 }
+//yahoo検索からhomepageを見つける。
+function url(str){
+  const encodeWord = encodeURI(str);
+  const url = 'https://search.yahoo.co.jp/search?p='+encodeWord;
+  const res = UrlFetchApp.fetch(url).getContentText('UTF-8');
+  const $ = Cheerio.load(res);
+  //URL文字列を入れておくための配列
+  const arr = [];
+  //繰り返し要素を指定して
+  $('li a').each((i,elem) => {
+    //繰り返し要素の中にあるhrefの値を取得する
+    arr[i] = $(elem).attr('href');
+  });
+  console.log(arr[0]);
+  //欲しいのは最初の検索結果のみ
+  return arr[0];
+}
