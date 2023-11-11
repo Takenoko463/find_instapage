@@ -43,23 +43,31 @@ function hitosara() {
   return urlnums;
 }
 function getinf(urlnum) {
-  //urlnum='0002143831/';
+  //urlnum='0020005983/';
+  //urlnum='0020000711/';
   const url = 'https://hitosara.com/' + urlnum;
   console.log(url);
   const response = UrlFetchApp.fetch(url);
   const content = response.getContentText("utf-8");
   const shopname = content.match(/(?<=<div class="shop-name">.*?<a href[^<>]*>\s*)[^<>]*(?=\s*<\/a>)/s);
-  var shopinf = content.match(/<div class="shop_info">.*?<table summary="設備情報">.*?<\/div>/s);
+  var shopinf = content.match(/<div class="shop_info">.*?<h4>基本情報<\/h4>.*?<div class="sent_bx">/s);
   if (shopinf) {
-
+    var phonenum = shopinf[0].match(/(?<=<p class="phone_num[^<>]*">[^<>]*)[0-9０－９]+[-ー][0-9０－９]+[-ー][0-9０－９]+(?=[^<>]*<\/p>)/g);
     var homepage = shopinf[0].match(/(?<=<th\s*>ホームページ<\/th>\s*<td\s*>\s*<a href[^<>]*>\s*)[^<>]*(?=\s*<\/a>)/);
+    if(phonenum){
+      pnum=phonenum.pop();
+    }else{
+      pnum=phonenum;
+    }
     if (homepage) {
-      return [shopname[0],homepage[0]];
+      //console.log([shopname[0],pnum,homepage[0]]);
+      return [shopname[0],pnum,homepage[0]];
     } else {
-      return [shopname[0], homepage];
+      //console.log([shopname[0],pnum,homepage]);
+      return [shopname[0], pnum,homepage];
     }
   } else {
-    return [shopname[0], shopinf];
+    return [shopname[0], shopinf,shopinf];
   }
 }
 function makeurl() {
