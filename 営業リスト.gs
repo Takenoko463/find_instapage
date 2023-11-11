@@ -14,13 +14,13 @@ function main() {
   sheet0.getRange(lastrow+1,1,boxes.length,boxes[0].length).setValues(boxes);
 }
 //ホームページがinstagramのときは無効
-function infd(){
+function infd(num){
   sheet=ss.getSheets()[0];
-  var boxes=sheet.getRange(2,1,sheet.getLastRow(),2).getValues();
+  var boxes=sheet.getRange(2,1,sheet.getLastRow(),num).getValues();
   var newboxes=[];
   const lastrow=sheet.getLastRow();
   boxes.forEach(function(box){
-    let url=box[1];
+    let url=box[num];
     if(url){
         newboxes.push(findinf(url));
         Utilities.sleep(500);
@@ -28,7 +28,7 @@ function infd(){
       newboxes.push(['','','']);
     }
   })
-  sheet.getRange(lastrow+1,3,newboxes.length,newboxes[0].length).setValues(newboxes);
+  sheet.getRange(lastrow+1,num+1,newboxes.length,newboxes[0].length).setValues(newboxes);
 }
 function hitosara() {
   const response = UrlFetchApp.fetch(makeurl());
