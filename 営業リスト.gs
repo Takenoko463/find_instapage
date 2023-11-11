@@ -9,26 +9,45 @@ function main() {
     //検索回数を少なくする
     Utilities.sleep(500);
   })
-  var sheet0=ss.getSheets()[0]
-  const lastrow=sheet0.getLastRow();
-  sheet0.getRange(lastrow+1,1,boxes.length,boxes[0].length).setValues(boxes);
+  var sheet0 = ss.getSheets()[0]
+  const lastrow = sheet0.getLastRow();
+  sheet0.getRange(lastrow + 1, 1, boxes.length, boxes[0].length).setValues(boxes);
+}
+//情報がないときだけ探索
+function searchhp() {
+  sheet = ss.getSheets()[0];
+  let lastrow = sheet.getLastRow();
+  var boxes = sheet.getRange(2, 1, lastrow - 1, 3).getValues();
+  var newboxes = [];
+  boxes.forEach(function (box) {
+    let homepage=box[2]
+    if (!box[2]) {
+      page = url(box[0]);
+      //検索回数を少なくする
+      Utilities.sleep(500);
+      homepage=page.replace(/.*?tabelog[.\.]*?|.*?instagram[.\.]*?|.*?hitosara[.\.]*?/g, '');
+    }
+    newboxes.push([homepage]);
+  })
+  //console.log(newboxes);
+  sheet.getRange(2,3,newboxes.length,newboxes[0].length).setValues(newboxes);
 }
 //ホームページがinstagramのときは無効
-function infd(num){
-  sheet=ss.getSheets()[0];
-  var boxes=sheet.getRange(2,1,sheet.getLastRow(),num).getValues();
-  var newboxes=[];
-  const lastrow=sheet.getLastRow();
-  boxes.forEach(function(box){
-    let url=box[num];
-    if(url){
-        newboxes.push(findinf(url));
-        Utilities.sleep(500);
-    }else{
-      newboxes.push(['','','']);
+function infd(num) {
+  sheet = ss.getSheets()[0];
+  var boxes = sheet.getRange(2, 1, sheet.getLastRow(), num).getValues();
+  var newboxes = [];
+  const lastrow = sheet.getLastRow();
+  boxes.forEach(function (box) {
+    let url = box[num];
+    if (url) {
+      newboxes.push(findinf(url));
+      Utilities.sleep(500);
+    } else {
+      newboxes.push(['', '', '']);
     }
   })
-  sheet.getRange(lastrow+1,num+1,newboxes.length,newboxes[0].length).setValues(newboxes);
+  sheet.getRange(lastrow + 1, num + 1, newboxes.length, newboxes[0].length).setValues(newboxes);
 }
 function hitosara() {
   const response = UrlFetchApp.fetch(makeurl());
@@ -54,20 +73,20 @@ function getinf(urlnum) {
   if (shopinf) {
     var phonenum = shopinf[0].match(/(?<=<p class="phone_num[^<>]*">[^<>]*)[0-9０－９]+[-ー][0-9０－９]+[-ー][0-9０－９]+(?=[^<>]*<\/p>)/g);
     var homepage = shopinf[0].match(/(?<=<th\s*>ホームページ<\/th>\s*<td\s*>\s*<a href[^<>]*>\s*)[^<>]*(?=\s*<\/a>)/);
-    if(phonenum){
-      pnum=phonenum.pop();
-    }else{
-      pnum=phonenum;
+    if (phonenum) {
+      pnum = phonenum.pop();
+    } else {
+      pnum = phonenum;
     }
     if (homepage) {
       //console.log([shopname[0],pnum,homepage[0]]);
-      return [shopname[0],pnum,homepage[0]];
+      return [shopname[0], pnum, homepage[0]];
     } else {
       //console.log([shopname[0],pnum,homepage]);
-      return [shopname[0], pnum,homepage];
+      return [shopname[0], pnum, homepage];
     }
   } else {
-    return [shopname[0], shopinf,shopinf];
+    return [shopname[0], shopinf, shopinf];
   }
 }
 function makeurl() {
