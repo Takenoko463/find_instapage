@@ -1,4 +1,4 @@
-function setting() {
+function setting1() {
   //sheet
   const sheet=ss.getSheets()[1];
   //元のURL
@@ -15,4 +15,21 @@ function setting() {
     box.push([p2,p3]);
   })
   sheet.getRange(2,1,box.length,box[0].length).setValues(box);
+}
+function setting2(){
+  //sheet
+  const sheet=ss.getSheets()[2];
+  //元のURL
+  const url = "https://hitosara.com/tokyo/"
+  const response = UrlFetchApp.fetch(url);
+  const content = response.getContentText("utf-8");
+  navs=content.match(/<ul class="tokyo">.*?<\/ul>/s);
+  lis=navs[0].match(/<li[^<>]*>.*?<\/li>/g);
+  var box=[];
+  lis.forEach(function(li){
+    tag=li.match(/\/([^\/<>]*\/)+/)[0];
+    name=li.match(/(?<=<p>)[^<>]*(?=<\/p>)/)[0];
+    box.push([name,tag]);
+  })
+ sheet.getRange(2,1,box.length,box[0].length).setValues(box);
 }
